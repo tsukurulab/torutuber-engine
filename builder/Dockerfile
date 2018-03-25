@@ -1,6 +1,6 @@
 FROM buildpack-deps:jessie
 
-###########################################################
+##############################
 ## python 3.6.4
 RUN apt-get purge -y python.*
 
@@ -48,30 +48,29 @@ RUN cd /usr/local/bin \
     && ln -s python3 python \
     && ln -s python3-config python-config
 
-###########################################################
-## requirements
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
-COPY requirements.txt /usr/src/app/
-RUN pip3 install --no-cache-dir -r requirements.txt
-RUN rm -rf /usr/src/app
-
-###########################################################
+##############################
 ## ffmpeg
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 RUN wget http://johnvansickle.com/ffmpeg/releases/ffmpeg-release-64bit-static.tar.xz \
     && tar xvf ffmpeg-release-64bit-static.tar.xz \
-    && cp ./ffmpeg-*/ffmpeg /usr/local/bin
-RUN rm -rf /usr/src/app
+    && cp ./ffmpeg-*/ffmpeg /usr/local/bin \
+    && rm -rf /usr/src/app
 
-###########################################################
-## dl.sh
-WORKDIR /tmp
+##############################
+## dlib
+WORKDIR /root
 RUN wget http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2 \
     && wget http://dlib.net/files/shape_predictor_5_face_landmarks.dat.bz2 \
     && wget http://dlib.net/files/dlib_face_recognition_resnet_model_v1.dat.bz2 \
     && bzip2 -d shape_predictor_68_face_landmarks.dat.bz2 \
     && bzip2 -d shape_predictor_5_face_landmarks.dat.bz2 \
     && bzip2 -d dlib_face_recognition_resnet_model_v1.dat.bz2
+
+## requirements
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+COPY requirements.txt /usr/src/app/
+RUN pip3 install --no-cache-dir -r requirements.txt \
+    && rm -rf /usr/src/app
 
